@@ -4,6 +4,18 @@ const File = use('App/Models/File');
 const Helpers = use('Helpers');
 
 class FileController {
+  async show({ response, params }) {
+    try {
+      const file = await File.findOrFail(params.id);
+
+      return response.download(Helpers.tmpPath(`uploads/${file.file}`));
+    } catch (err) {
+      return response
+        .status(err.status)
+        .send({ error: { message: 'Erro para mostrar o arquivo' } });
+    }
+  }
+
   async store({ request, response }) {
     try {
       if (!request.file('file'))
